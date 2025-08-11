@@ -25,6 +25,6 @@ class RegisterForm(forms.Form):
         password_confirm = self.cleaned_data['password_confirm']
 
         if password and password != password_confirm:
-            raise forms.ValidationError('Mật khẩu nhập lại không trùng khớp')
+            raise forms.ValidationError('Mật khẩu nhập lại không trùng khớp.')
 
         return password_confirm
