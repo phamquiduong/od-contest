@@ -31,5 +31,11 @@ class User(AbstractBaseUser):
 
     USERNAME_FIELD = 'username'
 
+    def has_module_perms(self, _):
+        return self.is_staff is True and self.role == Roles.ADMIN
+
+    def has_perm(self, _, __=None):
+        return self.has_module_perms(None)
+
     class Meta:
         db_table = 'users'
