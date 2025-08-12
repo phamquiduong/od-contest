@@ -1,7 +1,7 @@
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 
-from constants.roles import Roles
+from authentication.constants.roles import Roles
 
 
 class _UserManager(BaseUserManager):
