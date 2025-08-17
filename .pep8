@@ -1,0 +1,3 @@
+[pep8]
+max_line_length=120
+exclude=migrations,settings.py,manage.py,asgi.py,wsgi.py,__init__.py
