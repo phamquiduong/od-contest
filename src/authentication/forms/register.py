@@ -28,3 +28,10 @@ class RegisterForm(forms.Form):
             raise forms.ValidationError('Mật khẩu nhập lại không trùng khớp.')
 
         return password_confirm
+
+    def save(self) -> User:
+        user = User.objects.create_user(  # type:ignore
+            username=self.cleaned_data['username'],
+            password=self.cleaned_data['password']
+        )
+        return user
