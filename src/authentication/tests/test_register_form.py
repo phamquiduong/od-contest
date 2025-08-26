@@ -1,7 +1,9 @@
 import pytest
+from django.contrib.auth import get_user_model
 
 from authentication.forms.register import RegisterForm
-from authentication.models.user import User
+
+User = get_user_model()
 
 
 @pytest.mark.django_db
@@ -14,6 +16,16 @@ from authentication.models.user import User
 def test_register_form_valid(username, password, confirm_password):
     form = RegisterForm(data={'username': username, 'password': password, 'password_confirm': confirm_password})
     assert form.is_valid()
+
+    user: User = form.save()
+
+    user_db = User.objects.filter(id=user.id).first()
+
+    assert user_db is not None
+
+    assert user_db.check_password(password)
+
+    assert user_db.username == username
 
 
 @pytest.mark.django_db
@@ -43,8 +55,11 @@ def test_register_form_valid_username(username):
 )
 def test_register_exists_username(username, message_error):
     password = confirm_password = 'P@ssword123'
+
     User.objects.create_user(username=username, password=password)  # type: ignore
     form = RegisterForm(data={'username': username, 'password': password, 'password_confirm': confirm_password})
+
+    assert form.is_valid() is False
     assert message_error in form.errors['username']
 
 
