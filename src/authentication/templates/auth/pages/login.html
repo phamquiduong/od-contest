@@ -1,0 +1,32 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+Đăng nhập
+{% endblock title %}
+
+{% block navbar %}
+{% endblock navbar %}
+
+{% block main %}
+<form method="post">
+  {% csrf_token %}
+
+  <div>
+    <label for="register__username">Tên đăng nhập</label>
+    <input type="text" name="username" id="register__username">
+  </div>
+
+  <div>
+    <label for="register__password">Mật khẩu</label>
+    <input type="password" name="password" id="register__password">
+  </div>
+
+  <button type="submit">Đăng nhập</button>
+</form>
+
+<div>
+  {{ form.errors }}
+  {{ messages }}
+</div>
+
+{% endblock main %}
