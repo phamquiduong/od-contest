@@ -31,14 +31,19 @@
 
 <body>
   <!-- Navigation bar -->
-  <nav>
-    {% block navbar %}{% endblock navbar %}
+  <nav class="navbar navbar-expand-sm bg-body-tertiary shadow-sm mb-4 sticky-top">
+    <div class="container">
+      {% block navbar %}{% endblock navbar %}
+    </div>
   </nav>
 
   <!-- Main content -->
   <main>
     {% block main %}{% endblock main %}
   </main>
+
+  <!-- Toasts -->
+  {% include "components/toasts.html" %}
 
   <!-- Script -->
   <script src="{% static 'js/script.js' %}"></script>
