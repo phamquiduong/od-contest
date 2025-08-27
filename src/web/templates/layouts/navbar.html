@@ -1,0 +1,32 @@
+{% load static %}
+
+<a class="navbar-brand d-flex" href="{% url 'home' %}">
+  <img src="{% static '/favicon/favicon.svg' %}" alt="Logo" class="d-inline-block me-2 navbar__logo">
+  <div>OD Contest</div>
+</a>
+
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+  <ul class="navbar-nav me-auto">
+    <li class="nav-item">
+      <a class="nav-link {% if path == 'home' %}active{% endif %}" href="#">Trang chủ</a>
+    </li>
+  </ul>
+
+  <hr>
+
+  <form class="d-flex">
+    {% if user.is_authenticated %}
+    <button class="btn btn-outline-primary" type="submit">
+      <i class="fa-solid fa-user me-1"></i> {{ user.username }}
+    </button>
+    {% else %}
+    <a href="#">Đăng nhập</a>
+    <span class="mx-1">|</span>
+    <a href="{% url 'auth_register' %}">Đăng ký</a>
+    {% endif %}
+  </form>
+</div>

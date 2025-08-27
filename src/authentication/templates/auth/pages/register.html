@@ -5,33 +5,62 @@
 {% endblock title %}
 
 {% block navbar %}
+{% include 'layouts/navbar.html' with path='register' %}
 {% endblock navbar %}
 
 {% block main %}
-<form method="post">
-  {% csrf_token %}
+<div class="container bg-body-tertiary shadow border rounded px-4 py-5 mt-5 register__container">
+  <div class="mx-auto">
+    <h4>Đăng ký tài khoản mới</h4>
 
-  <div>
-    <label for="register__username">Tên đăng nhập</label>
-    <input type="text" name="username" id="register__username">
+    <hr>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label for="register__username" class="form-label">Tên đăng nhập</label>
+        <input type="text" name="username" id="register__username" class="form-control" value="{{ form.username.value|default:'' }}">
+        {% include 'components/field_errors.html' with form=form name='username' %}
+      </div>
+
+      <div class="mb-3">
+        <label for="register__password" class="form-label">Mật khẩu</label>
+        <input type="password" name="password" id="register__password" class="form-control" value="{{ form.password.value|default:'' }}">
+        {% include 'components/field_errors.html' with form=form name='password' %}
+      </div>
+
+      <div class="mb-4">
+        <label for="register__password_confirm" class="form-label">Nhập lại mật khẩu</label>
+        <input type="password" name="password_confirm" id="register__password_confirm" class="form-control" value="{{ form.password_confirm.value|default:'' }}">
+        {% include 'components/field_errors.html' with form=form name='password_confirm' %}
+      </div>
+
+      <div class="mb-4 ms-2">
+        <small>
+          Khi bạn nhấn nút đăng ký, bạn đã đồng ý với <a href="#">điều khoản sử dụng</a>,
+          <a href="#">chính sách bảo mật</a> và <a href="#">chính sách về Cookies</a>.
+        </small>
+      </div>
+
+      <div class="text-center d-grid mb-4">
+        <button type="submit" class="btn btn-secondary">Đăng kí</button>
+      </div>
+
+      <hr>
+
+      <div class="text-end">
+        Nếu đã có tài khoản? <a href="#">Đăng nhập tại đây</a>
+      </div>
+    </form>
   </div>
-
-  <div>
-    <label for="register__password">Mật khẩu</label>
-    <input type="password" name="password" id="register__password">
-  </div>
-
-  <div>
-    <label for="register__password_confirm">Nhập lại mật khẩu</label>
-    <input type="password" name="password_confirm" id="register__password_confirm">
-  </div>
-
-  <button type="submit">Đăng kí</button>
-</form>
-
-<div>
-  {{ form.errors }}
-  {{ messages }}
 </div>
-
 {% endblock main %}
+
+{% block style %}
+<style>
+  .register__container {
+    max-width: 30rem;
+  }
+</style>
+{% endblock style %}
