@@ -27,6 +27,6 @@ class LoginForm(forms.Form):
         password = self.cleaned_data.get("password")
 
         if self.user and not self.user.check_password(raw_password=password):
-            raise forms.ValidationError("Mật khẩu không đúng. Vui lòng kiểm tra lại")
+            raise forms.ValidationError("Mật khẩu không đúng. Vui lòng kiểm tra lại.")
 
         return password
