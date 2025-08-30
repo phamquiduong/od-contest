@@ -5,28 +5,55 @@
 {% endblock title %}
 
 {% block navbar %}
+{% include 'layouts/navbar.html' with path='login' %}
 {% endblock navbar %}
 
 {% block main %}
-<form method="post">
-  {% csrf_token %}
+<div class="container bg-body-tertiary shadow border rounded px-4 py-5 mt-5 login__container">
+  <div class="mx-auto">
+    <h4>Đăng nhập vào hệ thống</h4>
 
-  <div>
-    <label for="register__username">Tên đăng nhập</label>
-    <input type="text" name="username" id="register__username">
+    <hr>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="form-floating mb-3">
+        <input type="text" name="username" id="login__username" class="form-control" placeholder="Tên đăng nhập" value="{{ form.username.value|default:'' }}">
+        <label for="login__username">Tên đăng nhập</label>
+        {% include 'components/field_errors.html' with form=form name='username' %}
+      </div>
+
+      <div class="form-floating mb-3">
+        <input type="password" name="password" id="login__password" class="form-control" placeholder="Mật khẩu" value="{{ form.password.value|default:'' }}">
+        <label for="login__password">Mật khẩu</label>
+        {% include 'components/field_errors.html' with form=form name='password' %}
+      </div>
+
+      <div class="mb-4 text-end">
+        <small>
+          <a href="#">Quên mật khẩu?</a>
+        </small>
+      </div>
+
+      <div class="d-grid mb-4">
+        <button type="submit" class="btn btn-primary">Đăng nhập</button>
+      </div>
+    </form>
+
+    <hr>
+
+    <div class="text-end">
+      Nếu chưa có tài khoản? <a href="{% url 'auth_register' %}">Đăng ký tài khoản mới tại đây</a>
+    </div>
   </div>
-
-  <div>
-    <label for="register__password">Mật khẩu</label>
-    <input type="password" name="password" id="register__password">
-  </div>
-
-  <button type="submit">Đăng nhập</button>
-</form>
-
-<div>
-  {{ form.errors }}
-  {{ messages }}
 </div>
-
 {% endblock main %}
+
+{% block style %}
+<style>
+  .login__container {
+    max-width: 30rem;
+  }
+</style>
+{% endblock style %}
