@@ -2,7 +2,7 @@
 ## Công nghệ phát triển
 - Python 3.13
 - Django 5
-- SQLite3
+- SQLite3/ PostgreSQL
 - Redis
 
 <br>
@@ -36,6 +36,7 @@ python -m venv .venv
 
 #### Cách thủ công
 - Tải và cài ứng dụng Redis ở địa chỉ https://github.com/tporadowski/redis/releases
+- Tải và cài đặt PostgreSQL tại địa chỉ https://www.postgresql.org/download/
 
 <br>
 

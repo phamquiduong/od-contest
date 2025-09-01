@@ -13,3 +13,4 @@ db.sqlite3
 
 # Docker
 docker/redis/data/
+docker/postgresql/data/
