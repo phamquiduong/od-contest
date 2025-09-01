@@ -1,3 +1,12 @@
+# OD Contest
+## Công nghệ phát triển
+- Python 3.13
+- Django 5
+- SQLite3
+- Redis
+
+<br>
+
 ## Cài đặt môi trường ảo cho Python (không bắt buộc)
 #### Tạo môi trường ảo
 ```powershell
@@ -14,6 +23,19 @@ python -m venv .venv
 > ```powershell
 > Set-ExecutionPolicy Unrestricted -Force
 > ```
+
+<br>
+
+## Cài đặt các phần mềm hỗ trợ
+#### Tự động bằng Docker (yêu cầu cấu hình mạnh)
+> - Truy cập https://www.docker.com/ để tải và cài đặt Docker<br>
+> - Chạy lệnh
+>   ```powershell
+>   .\run_docker.bat
+>   ```
+
+#### Cách thủ công
+- Tải và cài ứng dụng Redis ở địa chỉ https://github.com/tporadowski/redis/releases
 
 <br>
 

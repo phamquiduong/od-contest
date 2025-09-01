@@ -131,3 +131,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom Auth User Model
 AUTH_USER_MODEL = 'authentication.User'
+
+
+# Setup cache server
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv('REDIS_URL'),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+
+# Setup session in Redis
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+SESSION_COOKIE_AGE = 60 * 60 * 24  # 1 day
+SESSION_SAVE_EVERY_REQUEST = True
+
+
+# Setup CSRF token in Redis
+CSRF_USE_SESSIONS = True
