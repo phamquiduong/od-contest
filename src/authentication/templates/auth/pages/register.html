@@ -37,8 +37,8 @@
       </div>
 
       <div class="mb-4 ms-2">
-        <small>
-          Khi bạn nhấn nút đăng ký, bạn đã đồng ý với <a href="#">điều khoản sử dụng</a>,
+        <small class="text-info-emphasis">
+          Khi bạn đăng ký tài khoản, bạn đã đồng ý với <a href="#">điều khoản sử dụng</a>,
           <a href="#">chính sách bảo mật</a> và <a href="#">chính sách về Cookies</a>.
         </small>
       </div>
@@ -46,13 +46,13 @@
       <div class="text-center d-grid mb-4">
         <button type="submit" class="btn btn-secondary">Đăng ký</button>
       </div>
-
-      <hr>
-
-      <div class="text-end">
-        Nếu đã có tài khoản? <a href="#">Đăng nhập tại đây</a>
-      </div>
     </form>
+
+    <hr>
+
+    <div class="text-end">
+      Nếu đã có tài khoản? <a href="{% url 'auth_login' %}">Đăng nhập tại đây</a>
+    </div>
   </div>
 </div>
 {% endblock main %}
