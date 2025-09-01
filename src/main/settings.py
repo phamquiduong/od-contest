@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+from enum import StrEnum
 import os
 from pathlib import Path
 
@@ -23,8 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'dev')
 
 
+class Environments(StrEnum):
+    GITHUB_ACTION = 'github_action'
+
+
 # Load dot-env file
-if ENVIRONMENT != 'github_action' and not load_dotenv(BASE_DIR / '../.env'):
+if ENVIRONMENT != Environments.GITHUB_ACTION and not load_dotenv(BASE_DIR / '../.env'):
     raise FileNotFoundError('.env file not found')
 
 
@@ -90,8 +95,12 @@ WSGI_APPLICATION = 'main.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / '../db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.getenv('DB_NAME', BASE_DIR / '../db.sqlite3'),
+        'USER': os.getenv('DB_USER', ''),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', ''),
+        'PORT': os.getenv('DB_PORT', ''),
     }
 }
 
