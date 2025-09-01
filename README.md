@@ -23,7 +23,13 @@ python -m venv .venv
 .\run_pip_install.bat
 ```
 
-#### Bước 2: Cập nhật cấu trúc Database
+#### Bước 2: Cài đặt file môi trường cho dự án
+```powershell
+.\setup_env.bat
+```
+> Sau đó mở file `.env` ra và cài đặt thông số phù hợp với dự án.
+
+#### Bước 3: Cập nhật cấu trúc Database
 ```powershell
 .\run_migrate.bat
 ```

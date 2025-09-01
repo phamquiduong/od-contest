@@ -9,6 +9,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      ENVIRONMENT: github_action
+      SECRET_KEY: UtBwzubmFGXykwWyiLBa0lF0PlXMuA21
 
     steps:
       - name: Checkout code
