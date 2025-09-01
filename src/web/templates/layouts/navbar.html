@@ -12,21 +12,46 @@
 <div class="collapse navbar-collapse" id="navbarSupportedContent">
   <ul class="navbar-nav me-auto">
     <li class="nav-item">
-      <a class="nav-link {% if path == 'home' %}active{% endif %}" href="#">Trang chủ</a>
+      <a class="nav-link {% if path == 'home' %}active{% endif %}" href="{% url 'home' %}">Trang chủ</a>
     </li>
   </ul>
 
   <hr>
 
-  <form class="d-flex">
-    {% if user.is_authenticated %}
-    <button class="btn btn-outline-primary" type="submit">
-      <i class="fa-solid fa-user me-1"></i> {{ user.username }}
-    </button>
-    {% else %}
-    <a href="#">Đăng nhập</a>
-    <span class="mx-1">|</span>
-    <a href="{% url 'auth_register' %}">Đăng ký</a>
-    {% endif %}
-  </form>
+  <div class="d-flex">
+    <ul class="navbar-nav me-auto">
+      {% if user.is_authenticated %}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fa-solid fa-user me-1"></i> {{ user.username }}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <a class="dropdown-item" href="#">Trang cá nhân</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'auth_change-password' %}">Đổi mật khẩu</a>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li>
+            <form action="{% url 'auth_logout' %}" method="post" id="logout__form">
+              {% csrf_token %}
+              <button class="dropdown-item" type="submit">Đăng xuất</button>
+            </form>
+          </li>
+        </ul>
+      </li>
+      {% else %}
+      <li class="nav-item">
+        <a class="nav-link {% if path == 'login' %}active{% endif %}" href="{% url 'auth_login' %}">Đăng nhập</a>
+      </li>
+      <span class="navbar-text">|</span>
+      <li class="nav-item">
+        <a class="nav-link {% if path == 'register' %}active{% endif %}" href="{% url 'auth_register' %}">Đăng ký</a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
 </div>
