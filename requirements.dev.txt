@@ -1,3 +1,9 @@
+# Gói hỗ trợ Pylint cho Django
 pylint-django==2.6.1
+
+# Chạy unit test
 pytest==8.4.1
 pytest-django==4.11.1
+
+# Server hỗ trợ giám sát Celery
+flower==2.0.1
