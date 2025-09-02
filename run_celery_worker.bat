@@ -7,6 +7,6 @@ call setup_env.bat
 call run_pip_install.bat
 cls
 
-@REM Tiến hành chạy migrate
+@REM Tiến hành chạy Worker
 cd src
-python manage.py migrate
+celery -A main worker -l info --pool=solo

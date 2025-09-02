@@ -33,6 +33,10 @@ if ENVIRONMENT != Environments.GITHUB_ACTION and not load_dotenv(BASE_DIR / '../
     raise FileNotFoundError('.env file not found')
 
 
+# Project name
+PROJECT_NAME = os.getenv('PROJECT_NAME', 'django')
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -58,6 +62,7 @@ INSTALLED_APPS = [
     # User applications
     'web',
     'authentication',
+    'mail',
 ]
 
 MIDDLEWARE = [
@@ -163,3 +168,24 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 # Setup CSRF token in Redis
 CSRF_USE_SESSIONS = True
+
+
+# Celery setup
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60  # 30mins
+
+
+# Sending mail
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
