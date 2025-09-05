@@ -12,7 +12,7 @@ class RegisterForm(forms.Form):
     password_confirm = forms.CharField()
 
     def clean_username(self):
-        username: str = self.cleaned_data['username']
+        username = self.cleaned_data.get('username', '')
 
         username = username.lower()
 
@@ -23,9 +23,9 @@ class RegisterForm(forms.Form):
 
     def clean_password_confirm(self):
         password = self.cleaned_data.get('password')
-        password_confirm = self.cleaned_data['password_confirm']
+        password_confirm = self.cleaned_data.get('password_confirm')
 
-        if password and password != password_confirm:
+        if password and password_confirm and password != password_confirm:
             raise forms.ValidationError('Mật khẩu nhập lại không trùng khớp.')
 
         return password_confirm

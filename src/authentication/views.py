@@ -18,7 +18,7 @@ def register_view(request: HttpRequest) -> HttpResponse:
     if request.method == HTTPMethod.POST and form.is_valid():
         user = form.save()
         login(request=request, user=user)
-        messages.success(request, "Đăng ký thành công.")
+        messages.success(request, 'Hello. Chào mừng bạn đến với <strong>OD Contest</strong>.')
         return redirect('home')
 
     return render(request, 'auth/pages/register.html', {'form': form})
@@ -30,7 +30,7 @@ def login_view(request: HttpRequest) -> HttpResponse:
 
     if request.method == HTTPMethod.POST and form.is_valid():
         login(request=request, user=form.user)
-        messages.success(request, "Đăng nhập thành công.")
+        messages.success(request, '<strong>OD Contest</strong> rất vui khi gặp lại bạn.')
         return redirect('home')
     return render(request, 'auth/pages/login.html', {'form': form})
 
@@ -43,7 +43,7 @@ def change_password_view(request: HttpRequest) -> HttpResponse:
     if request.method == HTTPMethod.POST and form.is_valid():
         user = form.save()
         login(request=request, user=user)
-        messages.success(request, "Thay đổi mật khẩu thành công.")
-        return redirect("home")
+        messages.success(request, 'Thay đổi mật khẩu thành công.')
+        return redirect('home')
 
     return render(request, 'auth/pages/change-password.html', {'form': form})
