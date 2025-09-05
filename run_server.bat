@@ -1,7 +1,7 @@
 @echo off
 
 @REM Cài đặt biến môi trường
-call setup_env.bat
+call .\setup_env.bat
 
 @REM Nâng cấp pip
 python -m pip install --upgrade pip
