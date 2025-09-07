@@ -31,7 +31,7 @@ python -m venv .venv
 > [!NOTE]
 > **Yêu cầu của server:**<br>
 > - **PostgreSQL** (Không bắt buộc): Cơ sở dữ liệu. Bạn có thể cài đặt dùng **SQLite3** khi tắt `DB_ENGINE` và `DB_NAME` trong file `.env`<br>
-> - **Redis** (Không bắt buộc): Nó được dùng cho tính năng lưu Session, CSRF và Celery gửi email. Bạn có thể tắt nó bằng `SESSION_ENGINE` trong `settings.py`
+> - **Redis** (Không bắt buộc): Nó được dùng cho tính năng lưu Session, CSRF. Bạn có thể cài đặt dùng **SQlite3** bằng cách tắt `SESSION_ENGINE` trong `.env`. Tuy nhiên, khi bạn dùng tính năng gửi email bằng **Celery**, bạn bắt buộc phải bật hoặc chuyển qua loại Broken mới trong `settings.py`.
 
 #### Cách 1: Tự động bằng Docker (yêu cầu cấu hình mạnh)
 > - Truy cập https://www.docker.com/ để tải và cài đặt Docker Desktop<br>
@@ -56,7 +56,7 @@ python -m venv .venv
 
 #### Bước 2: Cài đặt gói thư viện cho Python
 ```powershell
-.\run_pip_install.bat
+.\setup_pip.bat
 ```
 
 #### Bước 3: Cập nhật cấu trúc Database
@@ -80,12 +80,12 @@ python -m venv .venv
 ## Hệ thống Celery gửi mail (Chỉ cần bật khi cần tính năng gửi mail)
 #### Chạy Worker
 ```powershell
-.\run_celery_worker.bat
+.\run_email_worker.bat
 ```
 
 #### Chạy hệ thống giám sát Celery Flower(không bắt buộc)
 ```powershell
-.\run_celery_flower.bat
+.\run_flower.bat
 ```
 > [!NOTE]
 > - Khi bắt đầu chạy script sẽ hỏi bạn về `cổng mạng (port)` của Celery Flower. Nếu để trống mặc định là **5555**.<br>
@@ -95,5 +95,5 @@ python -m venv .venv
 
 ## Chạy test
 ```powershell
-.\run_tests.bat
+.\run_test.bat
 ```
