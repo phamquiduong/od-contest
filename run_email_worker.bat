@@ -1,12 +1,12 @@
 @echo off
 
 @REM Cài đặt biến môi trường
-call setup_env.bat
+call .\setup_env.bat
 
 @REM Cài đặt các gói Python
-call run_pip_install.bat
+call .\setup_pip.bat
 cls
 
 @REM Tiến hành chạy Worker
 cd src
-celery -A main worker -l info --pool=solo
+celery -A main worker -l info --pool=solo -Q email_queue
