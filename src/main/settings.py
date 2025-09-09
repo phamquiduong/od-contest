@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-from enum import StrEnum
 import os
 from pathlib import Path
 
@@ -23,18 +22,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Server environment
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'dev')
 
-
-class Environments(StrEnum):
-    GITHUB_ACTION = 'github_action'
+# Environments
+GITHUB_ACTION_ENV = 'github_action'
 
 
 # Load dot-env file
-if ENVIRONMENT != Environments.GITHUB_ACTION and not load_dotenv(BASE_DIR / '../.env'):
+if ENVIRONMENT != GITHUB_ACTION_ENV and not load_dotenv(BASE_DIR / '../.env'):
     raise FileNotFoundError('.env file not found')
 
 
 # Project name
-PROJECT_NAME = os.getenv('PROJECT_NAME', 'django')
+PROJECT_NAME = os.getenv('PROJECT_NAME', 'not_set_project_name')
 
 
 # Quick-start development settings - unsuitable for production
@@ -58,6 +56,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_prometheus',
+    'django_celery_beat',
 
     # User applications
     'web',
@@ -103,10 +103,10 @@ DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
         'NAME': os.getenv('DB_NAME', BASE_DIR / '../db.sqlite3'),
-        'USER': os.getenv('DB_USER', ''),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', ''),
-        'PORT': os.getenv('DB_PORT', ''),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
     }
 }
 
@@ -174,12 +174,6 @@ CSRF_USE_SESSIONS = True
 # Celery setup
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = TIME_ZONE
-CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 30 * 60  # 30mins
 
 # Queues
 CELERY_EMAIL_QUEUE = 'email_queue'

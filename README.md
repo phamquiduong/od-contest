@@ -1,10 +1,11 @@
-# OD Contest
 ## Công nghệ phát triển
 - Python 3.13
 - Django 5
 - SQLite3/ PostgreSQL
 - Redis
 - Gửi mail bằng Celery
+- Quản lý lập lịch bằng Celery Beat
+- Giám sát hệ thống với Flower và hệ sinh thái Prometheus
 
 <br>
 
@@ -39,7 +40,8 @@ python -m venv .venv
 >   ```powershell
 >   .\run_docker.bat
 >   ```
->   Bạn có thể cấu hình kết nối ở file `docker/.env` sau đó chạy lại file `run_docker.bat` để cập nhật cài đặt.
+>   - Bạn có thể cấu hình kết nối ở file `docker/.env` sau đó chạy lại file `run_docker.bat` để cập nhật cài đặt.<br>
+>   - Khi chạy script này nó sẽ hỏi bạn có chạy các cấu hình dịch vụ như `server`, `database`, `celery` và `monitoring`
 
 #### Cách 2: Cài đặt thủ công
 > - Tải và cài ứng dụng Redis ở địa chỉ https://github.com/tporadowski/redis/releases
@@ -49,20 +51,24 @@ python -m venv .venv
 
 ## Chuẩn bị cho dự án
 #### Bước 1: Cài đặt file môi trường cho dự án
-```powershell
-.\setup_env.bat
-```
-> Sau đó mở file `.env` ra và cài đặt thông số phù hợp với dự án.
+> - Tạo ra file `.env` (Có thể dựa từ file `.env.example`)<br>
+> - Sau đó mở file `.env` ra và cài đặt thông số phù hợp với dự án.
 
 #### Bước 2: Cài đặt gói thư viện cho Python
-```powershell
-.\setup_pip.bat
-```
+> - Chạy lệnh cài đặt gói cho server
+>   ```powershell
+>   pip install -r requirements.txt
+>   ```
+> - Chạy lệnh cài đặt gói phục vụ quá trình phát triển
+>   ```powershell
+>   pip install -r requirements.dev.txt
+>   ```
 
 #### Bước 3: Cập nhật cấu trúc Database
-```powershell
-.\run_migrate.bat
-```
+> - Chuyển vào thư mục `src` và chạy lệnh
+>   ```powershell
+>   python manage.py migrate
+>   ```
 
 <br>
 
@@ -81,19 +87,4 @@ python -m venv .venv
 #### Chạy Worker
 ```powershell
 .\run_email_worker.bat
-```
-
-#### Chạy hệ thống giám sát Celery Flower(không bắt buộc)
-```powershell
-.\run_flower.bat
-```
-> [!NOTE]
-> - Khi bắt đầu chạy script sẽ hỏi bạn về `cổng mạng (port)` của Celery Flower. Nếu để trống mặc định là **5555**.<br>
-> - Bạn truy cập http://localhost:5555 để vào được hệ thống.
-
-<br>
-
-## Chạy test
-```powershell
-.\run_test.bat
 ```

@@ -10,7 +10,9 @@ db.sqlite3
 
 # Environment variables
 .env
+.env.docker
 
 # Docker
 docker/redis/data/
 docker/postgresql/data/
+docker/alertmanager/alertmanager.yml
