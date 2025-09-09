@@ -1,0 +1,61 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - "alertmanager:9093"
+
+rule_files:
+  - "/etc/prometheus/alert_rules.yml"
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["prometheus:9090"]
+
+  # Django metrics
+  - job_name: "django"
+    metrics_path: /prometheus/metrics
+    static_configs:
+      - targets: ["django:8000"]
+
+  # Celery exporter
+  - job_name: "celery"
+    static_configs:
+      - targets: ["celery_exporter:9808"]
+
+  # Blackbox Exporter - PostgreSQL
+  - job_name: "postgres_blackbox"
+    metrics_path: /probe
+    params:
+      module: [postgres_tcp]
+    static_configs:
+      - targets:
+          - "postgresql:5432"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox_exporter:9115
+
+  # Blackbox Exporter - Redis
+  - job_name: "redis_blackbox"
+    metrics_path: /probe
+    params:
+      module: [redis_tcp]
+    static_configs:
+      - targets:
+          - "redis:6379"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox_exporter:9115

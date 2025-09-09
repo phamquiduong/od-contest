@@ -1,0 +1,20 @@
+groups:
+  - name: service-availability
+    rules:
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "The job {{ $labels.job }} at instance {{ $labels.instance }} has been down for more than 1 minute."
+
+      - alert: BlackboxServiceDown
+        expr: probe_success == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Blackbox probe failed for {{ $labels.job }}"
+          description: "The blackbox probe for {{ $labels.instance }} (job: {{ $labels.job }}) has been failing for more than 1 minute."
