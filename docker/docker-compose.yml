@@ -1,21 +1,21 @@
-version: "3"
-
 services:
-  redis:
-    image: redis:latest
-    container_name: ${COMPOSE_PROJECT_NAME}_redis
+  django:
+    build:
+      context: ..
+      dockerfile: docker/django/Dockerfile
     ports:
-      - "${REDIS_PORT}:6379"
+      - ${DJANGO_PORT}:8000
     volumes:
-      - ./redis/data:/data
+      - ../src:/src
+      - ../.env.docker:/.env
+    command: bash -c "cd src && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     restart: always
-    command: ["redis-server", "--appendonly", "yes"]
+    profiles: [ "server" ]
 
-  postgres:
+  postgresql:
     image: postgres:latest
-    container_name: ${COMPOSE_PROJECT_NAME}_postgres
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - ${POSTGRES_PORT}:5432
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -23,3 +23,79 @@ services:
     volumes:
       - ./postgresql/data:/var/lib/postgresql/data
     restart: always
+    profiles: [ "database" ]
+
+  redis:
+    image: redis:latest
+    ports:
+      - ${REDIS_PORT}:6379
+    volumes:
+      - ./redis/data:/data
+    command: [ "redis-server", "--appendonly", "yes" ]
+    restart: always
+    profiles: [ "database" ]
+
+  email_worker:
+    build:
+      context: ..
+      dockerfile: docker/email_worker/Dockerfile
+    volumes:
+      - ../src:/src
+      - ../.env.docker:/.env
+    command: bash -c "cd src && celery -A main worker -n email_worker@%h -l info -Q email_queue"
+    restart: always
+    profiles: [ "celery" ]
+
+  schedule_worker:
+    build:
+      context: ..
+      dockerfile: docker/schedule_worker/Dockerfile
+    volumes:
+      - ../src:/src
+      - ../.env.docker:/.env
+    command: bash -c "cd src && celery -A main worker --beat --scheduler django_celery_beat.schedulers:DatabaseScheduler -n schedule_worker@%h -l info -Q schedule_queue"
+    restart: always
+    profiles: [ "celery" ]
+
+  flower:
+    build:
+      context: .
+      dockerfile: flower/Dockerfile
+    ports:
+      - ${FLOWER_PORT}:5555
+    command: celery --broker=${FLOWER_BROKEN} --result-backend=${FLOWER_RESULT_BACKEND} flower --port=5555
+    restart: always
+    profiles: [ "monitor" ]
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml
+    ports:
+      - ${PROMETHEUS_PORT}:9090
+    restart: always
+    profiles: [ "monitor" ]
+
+  blackbox_exporter:
+    image: prom/blackbox-exporter:latest
+    volumes:
+      - ./blackbox_exporter/config.yml:/etc/blackbox_exporter/config.yml
+    restart: always
+    profiles: ["monitor"]
+
+  celery_exporter:
+    image: danihodovic/celery-exporter:latest
+    environment:
+      - CE_BROKER_URL=${CELERY_EXPORTER_BROKEN}
+    restart: always
+    profiles: ["monitor"]
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    ports:
+      - ${ALERT_MANAGER_PORT}:9093
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    restart: always
+    profiles: [ "monitor" ]

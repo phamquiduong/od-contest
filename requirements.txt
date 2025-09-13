@@ -1,14 +1,18 @@
 # Django server
 Django==5.2.5
 
-# Load biến môi trường từ file .env
+# Load environment
 python-dotenv==1.1.1
 
-# Hỗ trợ kết nối Redis
+# Redis
 django-redis==6.0.0
 
-# Hỗ trợ kết nối PostgreSQL
+# PostgreSQL
 psycopg2-binary==2.9.10
 
-# Hàng đợi Celery dùng Redis
+# Celery queue with Redis broken
 celery[redis]==5.5.3
+django-celery-beat==2.8.1
+
+# Export Prometheus
+django-prometheus==2.4.1

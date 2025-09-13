@@ -1,36 +1,38 @@
-from dataclasses import dataclass
-from typing import Any
-
 from celery import shared_task
 from celery.app.task import Task
 from django.conf import settings
+from django.utils import timezone
 
+from mail.constants.email import EmailStatus
+from mail.models.email_log import EmailLog
 from mail.services import EmailService
 
 
-@dataclass
-class SendEmailTaskArgs:
-    subject: str
-    template_name: str
-    to: list[str] | str
-    context: dict[str, Any] | None = None
-    bcc: list[str] | None = None
-    cc: list[str] | None = None
-
-
 @shared_task(bind=True, queue=settings.CELERY_EMAIL_QUEUE)
-def send_email_task(
-    self: Task,
-    subject: str,
-    template_name: str, context: dict[str, Any] | None,
-    to: list[str] | str,
-    bcc: list[str] | None,
-    cc: list[str] | None,
-):
-    email_service = EmailService.from_template(subject=subject, template_name=template_name, context=context)
+def send_email_task(self: Task, email_log_id: str):
+    email_log = EmailLog.objects.get(id=email_log_id)
+
+    email_service = EmailService.from_template(
+        subject=email_log.subject,
+        template_name=email_log.template_name,
+        context=email_log.context
+    )
 
     try:
-        email_service.send_email(to=to, bcc=bcc, cc=cc)
-        return f'Sent email [{template_name}] to {to}'
+        email_service.send_email(
+            to=email_log.to,
+            bcc=(email_log.bcc or '').split(','),
+            cc=(email_log.cc or '').split(',')
+        )
+
+        email_log.status = EmailStatus.SENT.value
+        email_log.sent_at = timezone.now()
+
+        return f'Sent email [{email_log.template_name}] to {email_log.to}'
     except Exception as exc:
-        raise self.retry(exc=exc)
+        email_log.status = EmailStatus.FAILED.value
+        email_log.error_message = str(exc)
+
+        raise exc
+    finally:
+        email_log.save()
