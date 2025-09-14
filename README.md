@@ -1,90 +1,97 @@
-## Công nghệ phát triển
-- Python 3.13
-- Django 5
-- SQLite3/ PostgreSQL
-- Redis
-- Gửi mail bằng Celery
-- Quản lý lập lịch bằng Celery Beat
-- Giám sát hệ thống với Flower và hệ sinh thái Prometheus
+## 🚀 Công nghệ sử dụng
+- **Backend:** Python 3.13, Django 5
+- **Database:** SQLite3 / PostgreSQL
+- **Caching & Queue:** Redis
+- **Task & Scheduling:** Celery + Celery Beat
+- **Email Service:** Celery
+- **Monitoring:** Flower, Prometheus ecosystem
 
 <br>
 
-## Cài đặt môi trường ảo cho Python (không bắt buộc)
-#### Tạo môi trường ảo
+## ⚙️ Môi trường ảo (tùy chọn)
+Tạo và kích hoạt môi trường ảo:
 ```powershell
 python -m venv .venv
-```
-
-#### Kích hoạt môi trường ảo
-```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
 > [!CAUTION]
-> Nếu bị lỗi thì mở **PowerShell** với quyền admin, chạy lệnh sau và thử lại
+> Nếu bị lỗi khi kích hoạt, mở **PowerShell** với quyền Admin và chạy:
 > ```powershell
 > Set-ExecutionPolicy Unrestricted -Force
 > ```
 
 <br>
 
-## Cài đặt các phần mềm hỗ trợ
-> [!NOTE]
-> **Yêu cầu của server:**<br>
-> - **PostgreSQL** (Không bắt buộc): Cơ sở dữ liệu. Bạn có thể cài đặt dùng **SQLite3** khi tắt `DB_ENGINE` và `DB_NAME` trong file `.env`<br>
-> - **Redis** (Không bắt buộc): Nó được dùng cho tính năng lưu Session, CSRF. Bạn có thể cài đặt dùng **SQlite3** bằng cách tắt `SESSION_ENGINE` trong `.env`. Tuy nhiên, khi bạn dùng tính năng gửi email bằng **Celery**, bạn bắt buộc phải bật hoặc chuyển qua loại Broken mới trong `settings.py`.
+## 🐳 Cài đặt & chạy bằng Docker (khuyên dùng, cần cấu hình mạnh)
+### 1. Cài đặt Docker Desktop
+👉 https://www.docker.com/
 
-#### Cách 1: Tự động bằng Docker (yêu cầu cấu hình mạnh)
-> - Truy cập https://www.docker.com/ để tải và cài đặt Docker Desktop<br>
-> - Chạy docker-compose
->   ```powershell
->   .\run_docker.bat
->   ```
->   - Bạn có thể cấu hình kết nối ở file `docker/.env` sau đó chạy lại file `run_docker.bat` để cập nhật cài đặt.<br>
->   - Khi chạy script này nó sẽ hỏi bạn có chạy các cấu hình dịch vụ như `server`, `database`, `celery` và `monitoring`
-
-#### Cách 2: Cài đặt thủ công
-> - Tải và cài ứng dụng Redis ở địa chỉ https://github.com/tporadowski/redis/releases
-> - Tải và cài đặt PostgreSQL tại địa chỉ https://www.postgresql.org/download/
-
-<br>
-
-## Chuẩn bị cho dự án
-#### Bước 1: Cài đặt file môi trường cho dự án
-> - Tạo ra file `.env` (Có thể dựa từ file `.env.example`)<br>
-> - Sau đó mở file `.env` ra và cài đặt thông số phù hợp với dự án.
-
-#### Bước 2: Cài đặt gói thư viện cho Python
-> - Chạy lệnh cài đặt gói cho server
->   ```powershell
->   pip install -r requirements.txt
->   ```
-> - Chạy lệnh cài đặt gói phục vụ quá trình phát triển
->   ```powershell
->   pip install -r requirements.dev.txt
->   ```
-
-#### Bước 3: Cập nhật cấu trúc Database
-> - Chuyển vào thư mục `src` và chạy lệnh
->   ```powershell
->   python manage.py migrate
->   ```
-
-<br>
-
-## Chạy server
+### 2. Chạy bằng script dựng sẵn
 ```powershell
-.\run_server.bat
+.\run_docker.bat
 ```
+- Lần đầu chạy sẽ dừng lại để bạn cấu hình `.env.docker` và `docker/.env`.
+- Có thể chọn bật các dịch vụ: `server`, `database`, `celery`, `monitoring`.
 
-> [!NOTE]
-> - Khi bắt đầu chạy script sẽ hỏi bạn về `cổng mạng (port)` của server. Nếu để trống mặc định là **80**.<br>
-> - Bạn truy cập http://localhost:80 để vào được website.
+### 3. Chạy thủ công
+```powershell
+docker-compose --profile database --profile server up --build -d
+```
+- Dùng `--profile *` để bật tất cả.
+- Hoặc bật riêng từng service:
+  ```powershell
+  docker-compose up [tên_service] --build -d
+  ```
 
 <br>
 
-## Hệ thống Celery gửi mail (Chỉ cần bật khi cần tính năng gửi mail)
-#### Chạy Worker
-```powershell
-.\run_email_worker.bat
-```
+## 🖥️ Chạy thủ công (không dùng Docker)
+### 1. Cài đặt phần mềm hỗ trợ
+- Redis (Windows): https://github.com/tporadowski/redis/releases
+- PostgreSQL: https://www.postgresql.org/download/
+
+### 2. Cấu hình
+- Tạo file `.env` (tham khảo `.env.example`).
+- Thiết lập PostgreSQL, Redis và SMTP server.
+
+### 3. Chạy bằng script dựng sẵn
+- **Server**
+  ```powershell
+  .\run_server.bat
+  ```
+  > - Script sẽ hỏi cổng server, mặc định **80**.
+  > - Truy cập http://localhost:80 để vào website.
+
+- **Email Worker**
+  ```powershell
+  .\run_email_worker.bat
+  ```
+
+<br>
+
+## 🛠️ Lệnh thường dùng
+- Cài gói cho server
+  ```powershell
+  pip install -r requirements.txt
+  ```
+
+- Cài gói cho môi trường dev
+  ```powershell
+  pip install -r requirements.dev.txt
+  ```
+
+- Tạo migrations
+  ```powershell
+  python manage.py makemigrations
+  ```
+
+- Cập nhật DB schema
+  ```powershell
+  python manage.py migrate
+  ```
+
+- Chạy server dev
+  ```powershell
+  python manage.py runserver 0.0.0.0:80
+  ```
