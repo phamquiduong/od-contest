@@ -1,6 +1,7 @@
 @echo off
 
-@REM Cài đặt biến môi trường cho Django
+
+@REM Set up environment variables for Django
 if not exist ".env" (
     echo Copying .env.example to .env...
     copy .env.example .env
@@ -14,13 +15,16 @@ if not exist ".env" (
     cls
 )
 
-@REM Nâng cấp pip
+
+@REM Upgrade pip
 python -m pip install --upgrade pip
 
-@REM Cài đặt các gói Python
+
+@REM Install Python packages
 pip install -r requirements.txt
 cls
 
-@REM Tiến hành chạy Worker
+
+@REM Start Celery Worker
 cd src
 celery -A main worker -l info --pool=solo -Q email_queue
