@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from mail.models.email_log import EmailLog
+from mail.models.log_email import LogEmail
 
 
-@admin.register(EmailLog)
+@admin.register(LogEmail)
 class EmailLogAdmin(admin.ModelAdmin):
     list_display = ('id', 'to', 'template_name', 'status', 'created_at', 'sent_at')
     list_filter = ('template_name', 'status')
@@ -16,4 +16,7 @@ class EmailLogAdmin(admin.ModelAdmin):
         return False
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        return True
+
+    def has_view_permission(self, request, obj=None):
+        return True

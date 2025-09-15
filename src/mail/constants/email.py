@@ -1,5 +1,5 @@
 
-from web.models.base import DjangoChoicesEnum
+from common.models.base import DjangoChoicesEnum
 
 
 class EmailStatus(DjangoChoicesEnum):

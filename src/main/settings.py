@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
 
     # User applications
-    'web',
+    'common',
     'authentication',
     'mail',
     'celery_tasks',
@@ -184,3 +184,37 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+# Setup logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console_format': {
+            'format': '[{levelname}] {asctime} {name}:{lineno} - {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'db': {
+            'level': 'INFO',
+            'class': 'common.handlers.DatabaseLogHandler',
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_format',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'user': {
+            'handlers': ['db', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

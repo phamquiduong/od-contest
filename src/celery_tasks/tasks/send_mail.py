@@ -4,13 +4,13 @@ from django.conf import settings
 from django.utils import timezone
 
 from mail.constants.email import EmailStatus
-from mail.models.email_log import EmailLog
+from mail.models.log_email import LogEmail
 from mail.services import EmailService
 
 
 @shared_task(bind=True, queue=settings.CELERY_EMAIL_QUEUE)
 def send_email_task(self: Task, email_log_id: str):
-    email_log = EmailLog.objects.get(id=email_log_id)
+    email_log = LogEmail.objects.get(id=email_log_id)
 
     email_service = EmailService.from_template(
         subject=email_log.subject,
@@ -35,4 +35,5 @@ def send_email_task(self: Task, email_log_id: str):
 
         raise exc
     finally:
+        email_log.context = None
         email_log.save()
