@@ -18,11 +18,11 @@ class _UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
-    username = models.CharField(max_length=32, unique=True, db_index=True)
+    username = models.CharField('Tên đăng nhập', max_length=32, unique=True, db_index=True)
 
     # Role and permission
-    is_staff = models.BooleanField(default=False)
-    role = models.CharField(null=True, blank=True)
+    is_staff = models.BooleanField('Admin', default=False)
+    role = models.CharField('Vai trò', null=True, blank=True)
 
     # Remove last login field
     last_login = None
@@ -31,10 +31,10 @@ class User(AbstractBaseUser):
 
     USERNAME_FIELD = 'username'
 
-    def has_module_perms(self, _):
+    def has_module_perms(self, app_label):
         return self.is_staff is True and self.role == Roles.ADMIN
 
-    def has_perm(self, _, __=None):
+    def has_perm(self, perm, obj=None):
         return self.has_module_perms(None)
 
     class Meta:

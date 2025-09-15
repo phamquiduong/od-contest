@@ -19,15 +19,15 @@ class DjangoChoicesEnum(Enum):
 
 
 class TimestampMixin(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField('Được tạo lúc', auto_now_add=True)
+    updated_at = models.DateTimeField('Được cập nhật lúc', auto_now=True)
 
     class Meta:
         abstract = True
 
 
 class UUIDMixin(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField('Mã UUID', primary_key=True, default=uuid.uuid4, editable=False)
 
     class Meta:
         abstract = True

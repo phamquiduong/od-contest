@@ -1,5 +1,5 @@
-from mail.models.email_log import EmailLog
+from mail.models.log_email import LogEmail
 
 __all__ = [
-    'EmailLog',
+    'LogEmail',
 ]
