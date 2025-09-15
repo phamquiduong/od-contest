@@ -1,6 +1,7 @@
 @echo off
 
-@REM Cài đặt biến môi trường cho Django
+
+@REM Set up environment variables for Django
 if not exist ".env" (
     echo Copying .env.example to .env...
     copy .env.example .env
@@ -14,18 +15,29 @@ if not exist ".env" (
     cls
 )
 
-@REM Nâng cấp pip
+
+@REM Upgrade pip
 python -m pip install --upgrade pip
 
-@REM Cài đặt requirements
+
+@REM Install requirements
 pip install -r requirements.txt
 cls
 
-@REM Cài đặt cổng để chạy server Django
+
+@REM Change dir to folder source code
+cd src
+
+
+@REM Run migrations
+python manage.py migrate
+
+
+@REM Set port to run Django server
 set /p PORT="> Server port (default 80): "
 if "%PORT%"=="" set PORT=80
 cls
 
-@REM Tiến hành chạy server Django
-cd src
+
+@REM Start Django server
 python manage.py runserver 0.0.0.0:%PORT%

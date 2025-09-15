@@ -1,7 +1,8 @@
 @echo off
 setlocal enabledelayedexpansion
 
-@REM Cài đặt biến môi trường cho Django
+
+@REM Set up environment variables for Django
 if not exist ".env.docker" (
     echo Copying .env.example to .env.docker...
     copy .env.example .env.docker
@@ -15,10 +16,12 @@ if not exist ".env.docker" (
     cls
 )
 
-@REM Bắt đầu thao tác với docker compose
+
+@REM Start working with docker compose
 cd docker
 
-@REM Cài đặt biến môi trường cho Docker
+
+@REM Set up environment variables for Docker
 if not exist ".env" (
     echo Copying .env.example to .env...
     copy .env.example .env
@@ -31,40 +34,57 @@ if not exist ".env" (
     cls
 )
 
-@REM Tạo file config alert manager
+
+@REM Shut down old docker containers
+docker-compose --profile * down
+cls
+
+
+@REM Generate Alertmanager config file
 cd alertmanager
 python render_alertmanager.py
 echo Rendered Alertmanager config file successfully...
 cd ..
 
-@REM Tắt các docker container cũ
-docker-compose --profile * down
-cls
 
-@REM Build và bật docker compose dưới nền
+@REM Build and start docker compose in the background
 set CMD=
 
-set /p srv="Start server profile [Y/n]? "
+
+set /p srv="Start server [Y/n]? "
 if "!srv!"=="" set srv=Y
 if /i "!srv!"=="Y" set CMD=!CMD! --profile server
 
-set /p db="Start database profile [Y/n]? "
+
+set /p db="Start database [Y/n]? "
 if "!db!"=="" set db=Y
 if /i "!db!"=="Y" set CMD=!CMD! --profile database
 
-set /p cel="Start celery profile [Y/n]? "
-if "!cel!"=="" set cel=Y
+
+set /p cel="Start celery [y/N]? "
+if "!cel!"=="" set cel=N
 if /i "!cel!"=="Y" set CMD=!CMD! --profile celery
 
-set /p mon="Start monitoring profile [y/N]? "
+
+set /p mon="Start monitoring [y/N]? "
 if "!mon!"=="" set mon=N
 if /i "!mon!"=="Y" set CMD=!CMD! --profile monitor
 
+
 if "!CMD!"=="" (
-    echo No profiles selected. Exiting...
+    echo No services selected. Exiting...
     exit /b
 )
 
+
 cls
 
+
+@REM Show selected services before starting
+echo Starting docker compose with:
+echo    !CMD!
+echo.
+
+
+@REM Start docker compose with chosen profiles
 docker-compose !CMD! up --build -d
