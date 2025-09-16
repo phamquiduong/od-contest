@@ -1,5 +1,5 @@
-from enum import StrEnum
+from common.models.base import DjangoChoicesEnum
 
 
-class EmailTemplates(StrEnum):
+class EmailTemplates(DjangoChoicesEnum):
     TEST = 'test_email'

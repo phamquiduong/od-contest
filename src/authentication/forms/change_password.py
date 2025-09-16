@@ -5,7 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 User = get_user_model()
 
 
-class PasswordChangeForm(forms.Form):
+class ChangePasswordForm(forms.Form):
     old_password = forms.CharField()
     new_password = forms.CharField(min_length=6, max_length=16, validators=[validate_password])
     new_password_confirm = forms.CharField()

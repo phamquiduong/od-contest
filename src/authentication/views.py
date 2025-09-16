@@ -6,9 +6,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
 from authentication.decorators.login import require_login, require_not_login
-from authentication.forms.change_password import PasswordChangeForm
-from authentication.forms.login import LoginForm
-from authentication.forms.register import RegisterForm
+from authentication.forms import ChangePasswordForm, LoginForm, RegisterForm
 
 
 @require_not_login
@@ -37,7 +35,7 @@ def login_view(request: HttpRequest) -> HttpResponse:
 
 @require_login
 def change_password_view(request: HttpRequest) -> HttpResponse:
-    form = PasswordChangeForm(request.POST or None)
+    form = ChangePasswordForm(request.POST or None)
     form.user = request.user
 
     if request.method == HTTPMethod.POST and form.is_valid():

@@ -7,7 +7,7 @@ from django.db import models
 class DjangoChoicesEnum(Enum):
     @classmethod
     def choices(cls):
-        return [(member.value, member.name.title()) for member in cls]
+        return [(member.value, member.name) for member in cls]
 
     @classmethod
     def values(cls):
@@ -19,15 +19,30 @@ class DjangoChoicesEnum(Enum):
 
 
 class TimestampMixin(models.Model):
-    created_at = models.DateTimeField('Được tạo lúc', auto_now_add=True)
-    updated_at = models.DateTimeField('Được cập nhật lúc', auto_now=True)
+    created_at = models.DateTimeField('Thời gian tạo', auto_now_add=True)
+    updated_at = models.DateTimeField('Thời gian cập nhật', auto_now=True)
 
     class Meta:
         abstract = True
 
 
 class UUIDMixin(models.Model):
+    # Will update to UUID7 in the feature
     id = models.UUIDField('Mã UUID', primary_key=True, default=uuid.uuid4, editable=False)
 
     class Meta:
         abstract = True
+
+
+class AdminLogPermissionMixin:
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return True
+
+    def has_view_permission(self, request, obj=None):
+        return True

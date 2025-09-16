@@ -1,90 +1,29 @@
 @echo off
-setlocal enabledelayedexpansion
+REM ==============================================
+REM Docker Setup Script with Django Setup
+REM ==============================================
 
-
-@REM Set up environment variables for Django
-if not exist ".env.docker" (
-    echo Copying .env.example to .env.docker...
-    copy .env.example .env.docker
-    cls
-
-    echo.
-    echo Please open ".env.docker" and update the configuration to match your Docker setup.
-    echo After making the necessary changes, press ENTER to continue...
-    pause >nul
-
-    cls
-)
-
-
-@REM Start working with docker compose
-cd docker
-
-
-@REM Set up environment variables for Docker
+REM Set up environment variables
 if not exist ".env" (
     echo Copying .env.example to .env...
     copy .env.example .env
-
-    echo.
-    echo Please open "docker/.env" and update the configuration for docker compose.
-    echo After making the necessary changes, press ENTER to continue...
-    pause >nul
-
-    cls
 )
 
+REM Change directory to the docker folder
+cd docker
 
-@REM Shut down old docker containers
-docker-compose --profile * down
-cls
+REM Stop all Docker containers and remove orphans
+echo Stopping all Docker containers and removing orphans...
+docker-compose --env-file ../.env --profile * down
 
+REM Start main Docker containers
+echo Starting main Docker containers...
+docker-compose --env-file ../.env up --build -d
 
-@REM Generate Alertmanager config file
-cd alertmanager
-python render_alertmanager.py
-echo Rendered Alertmanager config file successfully...
-cd ..
-
-
-@REM Build and start docker compose in the background
-set CMD=
-
-
-set /p srv="Start server [Y/n]? "
-if "!srv!"=="" set srv=Y
-if /i "!srv!"=="Y" set CMD=!CMD! --profile server
-
-
-set /p db="Start database [Y/n]? "
-if "!db!"=="" set db=Y
-if /i "!db!"=="Y" set CMD=!CMD! --profile database
-
-
-set /p cel="Start celery [y/N]? "
-if "!cel!"=="" set cel=N
-if /i "!cel!"=="Y" set CMD=!CMD! --profile celery
-
-
-set /p mon="Start monitoring [y/N]? "
-if "!mon!"=="" set mon=N
-if /i "!mon!"=="Y" set CMD=!CMD! --profile monitor
-
-
-if "!CMD!"=="" (
-    echo No services selected. Exiting...
-    exit /b
+REM Ask whether to start monitoring services (default No)
+set /p START_MONITORING="Do you want to start monitoring services? [y/N]: "
+if /i "%START_MONITORING%"=="" set START_MONITORING=N
+if /i "%START_MONITORING%"=="Y" (
+    echo Starting Docker containers with monitoring profile...
+    docker-compose --env-file ../.env --profile monitoring up --build -d
 )
-
-
-cls
-
-
-@REM Show selected services before starting
-echo Starting docker compose with:
-echo    !CMD!
-echo.
-
-
-@REM Start docker compose with chosen profiles
-docker-compose !CMD! up --build -d
