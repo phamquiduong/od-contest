@@ -10,36 +10,37 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+from enum import StrEnum
 import os
 from pathlib import Path
 
 from dotenv import load_dotenv
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Server environment
-ENVIRONMENT = os.getenv('ENVIRONMENT', 'dev')
+# Environment
+class Environments(StrEnum):
+    DEV = 'dev'
+    DOCKER = 'docker'
+    GITHUB = 'github'
 
-# Environments
-GITHUB_ACTION_ENV = 'github_action'
+
+ENVIRONMENT = os.getenv('ENVIRONMENT', Environments.DEV)
 
 
 # Load dot-env file
-if ENVIRONMENT != GITHUB_ACTION_ENV and not load_dotenv(BASE_DIR / '../.env'):
+if ENVIRONMENT != Environments.GITHUB and not load_dotenv(BASE_DIR / '../.env'):
     raise FileNotFoundError('.env file not found')
-
-
-# Project name
-PROJECT_NAME = os.getenv('PROJECT_NAME', 'not_set_project_name')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = 'github_environment' if ENVIRONMENT == Environments.GITHUB else os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
@@ -58,6 +59,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_prometheus',
     'django_celery_beat',
+    'django_celery_results',
 
     # User applications
     'common',
@@ -99,15 +101,22 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+SQLITE3_CONFIG = {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': BASE_DIR / '../db.sqlite3',
+}
+
+POSTGRESQL_CONFIG = {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': os.getenv('POSTGRES_DB'),
+    'USER': os.getenv('POSTGRES_USER'),
+    'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+    'HOST': os.getenv('POSTGRES_HOST'),
+    'PORT': os.getenv('POSTGRES_PORT'),
+}
+
 DATABASES = {
-    'default': {
-        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
-        'NAME': os.getenv('DB_NAME', BASE_DIR / '../db.sqlite3'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-    }
+    'default': POSTGRESQL_CONFIG if ENVIRONMENT == Environments.DOCKER else SQLITE3_CONFIG
 }
 
 
@@ -137,6 +146,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / '../.static'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -149,44 +159,43 @@ AUTH_USER_MODEL = 'authentication.User'
 
 
 # Setup cache server
+LOCAL_MEMORY_CACHING = {
+    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    'LOCATION': 'unique-snowflake',
+}
+
+REDIS_CACHING = {
+    'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+    'LOCATION': os.getenv('CACHE_LOCATION')
+}
+
 CACHES = {
-    'default': {
-        'BACKEND': os.getenv('CACHE_BACKEND', 'django.core.cache.backends.locmem.LocMemCache'),
-        'LOCATION': os.getenv('CACHE_LOCATION', 'unique-snowflake'),
-    }
+    'default': REDIS_CACHING if ENVIRONMENT == Environments.DOCKER else LOCAL_MEMORY_CACHING
 }
 
 
-# Setup session in Redis
-SESSION_ENGINE = os.getenv('SESSION_ENGINE', 'django.contrib.sessions.backends.db')
-SESSION_CACHE_ALIAS = 'default'
-SESSION_COOKIE_AGE = int(os.getenv('SESSION_COOKIE_AGE', '86400'))
-SESSION_SAVE_EVERY_REQUEST = True
-
-
-# Setup CSRF token in Redis
-CSRF_USE_SESSIONS = True
+# Setup session
+SESSION_IN_CACHE = 'django.contrib.sessions.backends.cache'
+SESSION_IN_DB = 'django.contrib.sessions.backends.db'
+SESSION_ENGINE = SESSION_IN_CACHE if ENVIRONMENT == Environments.DOCKER else SESSION_IN_DB
 
 
 # Celery setup
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
-CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
-
-# Queues
-CELERY_EMAIL_QUEUE = 'email_queue'
+CELERY_RESULT_BACKEND = 'django-db'
 
 
 # Sending mail
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_PORT = os.getenv('EMAIL_PORT')
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST = os.getenv('SMTP_HOST')
+EMAIL_PORT = os.getenv('SMTP_PORT')
+EMAIL_HOST_USER = os.getenv('SMTP_USER')
+EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASS')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
-# Setup logging
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -197,10 +206,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'db': {
-            'level': 'INFO',
-            'class': 'common.handlers.DatabaseLogHandler',
-        },
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'console_format',
@@ -208,13 +213,16 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'INFO',
+        'level': os.getenv('LOG_LEVEL', 'INFO'),
     },
     'loggers': {
-        'user': {
-            'handlers': ['db', 'console'],
-            'level': 'INFO',
-            'propagate': False,
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': os.getenv('SQL_LOG_LEVEL', 'INFO'),
         },
     },
 }
+
+LOG_REQUEST = os.getenv('LOG_REQUEST', 'True').lower() == 'true'
+if LOG_REQUEST:
+    MIDDLEWARE.append('common.middlewares.log_request.LogRequestMiddleware')

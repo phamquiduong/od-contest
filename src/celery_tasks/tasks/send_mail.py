@@ -1,14 +1,14 @@
 from celery import shared_task
 from celery.app.task import Task
-from django.conf import settings
 from django.utils import timezone
 
+from celery_tasks.constants.queue import Queues
 from mail.constants.email import EmailStatus
-from mail.models.log_email import LogEmail
+from mail.models import LogEmail
 from mail.services import EmailService
 
 
-@shared_task(bind=True, queue=settings.CELERY_EMAIL_QUEUE)
+@shared_task(bind=True, queue=Queues.EMAIL)
 def send_email_task(self: Task, email_log_id: str):
     email_log = LogEmail.objects.get(id=email_log_id)
 

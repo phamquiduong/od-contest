@@ -1,5 +1,5 @@
-from common.models.log_entry import LogEntry
+from common.models.log_request import LogRequest
 
 __all__ = [
-    'LogEntry',
+    'LogRequest',
 ]

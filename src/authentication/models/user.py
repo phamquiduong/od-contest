@@ -2,9 +2,10 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 
 from authentication.constants.roles import Roles
+from common.models.base import TimestampMixin
 
 
-class _UserManager(BaseUserManager):
+class UserManager(BaseUserManager):
     def create_user(self, username: str, password: str, **extra_fields):
         user = self.model(username=username, **extra_fields)
         user.set_password(raw_password=password)
@@ -17,17 +18,17 @@ class _UserManager(BaseUserManager):
         return self.create_user(username=username, password=password, **extra_fields)
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, TimestampMixin):
     username = models.CharField('Tên đăng nhập', max_length=32, unique=True, db_index=True)
 
     # Role and permission
-    is_staff = models.BooleanField('Admin', default=False)
+    is_staff = models.BooleanField('Quản trị', default=False)
     role = models.CharField('Vai trò', null=True, blank=True)
 
     # Remove last login field
     last_login = None
 
-    objects = _UserManager()
+    objects = UserManager()
 
     USERNAME_FIELD = 'username'
 
@@ -37,5 +38,10 @@ class User(AbstractBaseUser):
     def has_perm(self, perm, obj=None):
         return self.has_module_perms(None)
 
+    def __str__(self) -> str:
+        return f'[#{self.id} {self.username}]'
+
     class Meta:
         db_table = 'users'
+        verbose_name = 'Người dùng'
+        verbose_name_plural = 'Người dùng'

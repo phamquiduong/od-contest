@@ -1,8 +1,16 @@
+# Python
+pylint==3.3.8
+isort==6.0.1
+autopep8==2.3.2
+python-dotenv==1.1.1
+
 # Django server
+gunicorn==23.0.0
 Django==5.2.5
 
-# Load environment
-python-dotenv==1.1.1
+# Testing
+pytest==8.4.1
+pytest-django==4.11.1
 
 # Redis
 django-redis==6.0.0
@@ -13,6 +21,8 @@ psycopg2-binary==2.9.10
 # Celery queue with Redis broken
 celery[redis]==5.5.3
 django-celery-beat==2.8.1
+flower==2.0.1
+django-celery-results==2.6.0
 
 # Export Prometheus
 django-prometheus==2.4.1

@@ -1,43 +1,50 @@
 @echo off
+REM ==============================================
+REM Django Setup Script
+REM ==============================================
 
+REM Upgrade pip
+python -m pip install --upgrade pip
 
-@REM Set up environment variables for Django
+REM Install requirements
+pip install -r requirements.txt
+
+REM Set up environment variables for Django
 if not exist ".env" (
     echo Copying .env.example to .env...
     copy .env.example .env
-    cls
-
-    echo.
-    echo Please open ".env" and update the configuration for your Django project.
-    echo After making the necessary changes, press ENTER to continue...
-    pause >nul
-
-    cls
 )
 
-
-@REM Upgrade pip
-python -m pip install --upgrade pip
-
-
-@REM Install requirements
-pip install -r requirements.txt
-cls
-
-
-@REM Change dir to folder source code
+REM Change directory to the source code folder
 cd src
 
+REM Ask whether to run makemigrations (default Yes)
+set /p RUN_MIGRATIONS="Do you want to run makemigrations? [Y/n]: "
+if /i "%RUN_MIGRATIONS%"=="" set RUN_MIGRATIONS=Y
+if /i "%RUN_MIGRATIONS%"=="Y" (
+    python manage.py makemigrations common
+    python manage.py makemigrations authentication
+    python manage.py makemigrations mail
+    python manage.py makemigrations celery_tasks
+)
 
-@REM Run migrations
-python manage.py migrate
+REM Ask whether to run migrate (default Yes)
+set /p RUN_MIGRATE="Do you want to run migrate? [Y/n]: "
+if /i "%RUN_MIGRATE%"=="" set RUN_MIGRATE=Y
+if /i "%RUN_MIGRATE%"=="Y" (
+    python manage.py migrate
+)
 
+REM Ask whether to create superuser (default No)
+set /p CREATE_SUPERUSER="Do you want to create a superuser? [y/N]: "
+if /i "%CREATE_SUPERUSER%"=="" set CREATE_SUPERUSER=N
+if /i "%CREATE_SUPERUSER%"=="Y" (
+    python manage.py createsuperuser
+)
 
-@REM Set port to run Django server
+REM Ask for server port
 set /p PORT="> Server port (default 80): "
 if "%PORT%"=="" set PORT=80
-cls
 
-
-@REM Start Django server
+REM Start Django server
 python manage.py runserver 0.0.0.0:%PORT%
