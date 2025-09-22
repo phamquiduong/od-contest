@@ -17,3 +17,4 @@ docker/postgresql/data/
 
 # Static file
 .static/
+.media/

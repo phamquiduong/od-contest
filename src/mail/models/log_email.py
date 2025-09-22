@@ -15,7 +15,7 @@ class LogEmail(UUIDMixin, TimestampMixin):
     context = models.JSONField('Tham số', blank=True, null=True)
 
     status = models.CharField('Trạng thái', max_length=16,
-                              choices=EmailStatus.choices(), default=EmailStatus.PENDING.value)
+                              choices=EmailStatus.choices(), default=EmailStatus.PENDING)
     error_message = models.TextField('Lỗi', blank=True, null=True)
     sent_at = models.DateTimeField('Thời gian gửi', blank=True, null=True)
 

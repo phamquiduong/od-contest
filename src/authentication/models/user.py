@@ -23,7 +23,7 @@ class User(AbstractBaseUser, TimestampMixin):
 
     # Role and permission
     is_staff = models.BooleanField('Quản trị', default=False)
-    role = models.CharField('Vai trò', null=True, blank=True)
+    role = models.CharField('Vai trò', null=True, blank=True, choices=Roles.choices())
 
     # Remove last login field
     last_login = None
