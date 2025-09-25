@@ -45,3 +45,8 @@ python -m venv .venv
 ```powershell
 .\run_server.bat
 ```
+
+<br>
+
+## Sơ đồ của hệ thống
+![Infra diagram](./docs/infra.drawio.svg)
