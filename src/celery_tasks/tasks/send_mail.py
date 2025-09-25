@@ -25,12 +25,12 @@ def send_email_task(self: Task, email_log_id: str):
             cc=(email_log.cc or '').split(',')
         )
 
-        email_log.status = EmailStatus.SENT.value
+        email_log.status = EmailStatus.SENT
         email_log.sent_at = timezone.now()
 
         return f'Sent email [{email_log.template_name}] to {email_log.to}'
     except Exception as exc:
-        email_log.status = EmailStatus.FAILED.value
+        email_log.status = EmailStatus.FAILED
         email_log.error_message = str(exc)
 
         raise exc

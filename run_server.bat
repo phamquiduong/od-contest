@@ -26,6 +26,7 @@ if /i "%RUN_MIGRATIONS%"=="Y" (
     python manage.py makemigrations authentication
     python manage.py makemigrations mail
     python manage.py makemigrations celery_tasks
+    python manage.py makemigrations upload
 )
 
 REM Ask whether to run migrate (default Yes)

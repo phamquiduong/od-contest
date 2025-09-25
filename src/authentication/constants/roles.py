@@ -1,5 +1,5 @@
-from enum import StrEnum
+from common.models.base import DjangoChoicesEnum
 
 
-class Roles(StrEnum):
+class Roles(str, DjangoChoicesEnum):
     ADMIN = 'Quản trị'
