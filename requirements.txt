@@ -8,6 +8,12 @@ python-dotenv==1.1.1
 gunicorn==23.0.0
 Django==5.2.5
 
+# Rest
+djangorestframework==3.16.1
+markdown==3.9
+django-filter==25.1
+djangorestframework-simplejwt==5.5.1
+
 # Testing
 pytest==8.4.1
 pytest-django==4.11.1

@@ -22,9 +22,15 @@ from django.urls import include, path
 urlpatterns = [
     path('', include('common.urls')),
     path('admin/', admin.site.urls),
-    path('auth/', include('authentication.urls')),
+    path('auth/', include('authentication.router.urls')),
     path('prometheus/', include('django_prometheus.urls')),
 ]
+
+api_urlpatterns = [
+    path('auth/', include('authentication.router.api_urls'))
+]
+
+urlpatterns += [path('api/', include(api_urlpatterns))]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
