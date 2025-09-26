@@ -18,9 +18,9 @@ if not exist ".env" (
 REM Change directory to the source code folder
 cd src
 
-REM Ask whether to run makemigrations (default Yes)
-set /p RUN_MIGRATIONS="Do you want to run makemigrations? [Y/n]: "
-if /i "%RUN_MIGRATIONS%"=="" set RUN_MIGRATIONS=Y
+REM Ask whether to run makemigrations (default No)
+set /p RUN_MIGRATIONS="Do you want to run makemigrations? [y/N]: "
+if /i "%RUN_MIGRATIONS%"=="" set RUN_MIGRATIONS=N
 if /i "%RUN_MIGRATIONS%"=="Y" (
     python manage.py makemigrations common
     python manage.py makemigrations authentication

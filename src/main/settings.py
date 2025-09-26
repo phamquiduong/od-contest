@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+from datetime import timedelta
 from enum import StrEnum
 import os
 from pathlib import Path
@@ -60,6 +61,9 @@ INSTALLED_APPS = [
     'django_prometheus',
     'django_celery_beat',
     'django_celery_results',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 
     # User applications
     'common',
@@ -232,3 +236,20 @@ LOGGING = {
 LOG_REQUEST = os.getenv('LOG_REQUEST', 'True').lower() == 'true'
 if LOG_REQUEST:
     MIDDLEWARE.append('common.middlewares.log_request.LogRequestMiddleware')
+
+
+# Rest framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+
+# JWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+}
