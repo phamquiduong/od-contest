@@ -242,7 +242,8 @@ if LOG_REQUEST:
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'EXCEPTION_HANDLER': 'common.exceptions.api.api_exception_handler',
 }
 
 
